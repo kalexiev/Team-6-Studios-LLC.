@@ -251,7 +251,7 @@ public class GUI {
 								}
 							}
 						}
-						textAreaOutput.append("**There are " + paths+ " paths**" + "\n\n");
+						//textAreaOutput.append("**There are " + paths+ " paths**" + "\n\n");
 						int j = 1;
 						for (int i = 0; i <= paths; i++); {
 							textAreaOutput.append("Path: " + j + '\n');
