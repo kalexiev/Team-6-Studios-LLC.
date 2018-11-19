@@ -326,13 +326,13 @@ public class GUI {
 					helpFrame.setVisible(true);
 					
 					// Application label (help text):
-					JLabel helpText = new JLabel("<html>To use the program, enter your input under the ‘Input’ lable on the left of the interface.<br><br>"
+					JLabel helpText = new JLabel("<html>To use the program, enter your input under the Â‘InputÂ’ lable on the left of the interface.<br><br>"
 							+ "- The activity name will be the name of the activity, which can be a string containing both letters, numbers, and symbols.<br><br>"
 							+ "- The duration will be the length of duration of the previously stated activity, given as an integer. The duration may not contain any letters or symbols.<br><br>"
 							+ "- The list of dependencies will be the preceding activities that must come before the given activity. Dependency names must match their corresponding activity name exactly. If there is more than one dependency, separate them in a list with a comma.<br><br>"
-							+ "- If the activity has no dependencies, just leave the dependecies box empty’.<br><br>"
+							+ "- If the activity has no dependencies, just leave the dependecies box emptyÂ’.<br><br>"
 							+ "- All input must be given in the order specified above, no rearranging of parameters is allowed.<br><br><br>"
-							+ "Once you have typed in all of your input, click the ‘PROCESS’ button on the bottom of the interface to run the program using your parameters.<br><br>"
+							+ "Once you have typed in all of your input, click the Â‘PROCESSÂ’ button on the bottom of the interface to run the program using your parameters.<br><br>"
 							+ "The Output of the program using our parameters will be displayed on the right side of the interface. The Output will include a list of all paths possible, using your parameters. The paths will be organized in descending order by duration.<br><br>"
 							+ "Also, part of V2, you may press 'Critical Path' to be outputted your network diagram's critical path in the output box, as well as the 'Export Report' button to export the results into a text document.</html>");
 					helpText.setBounds(25, 15, 750, 550);
@@ -825,4 +825,4 @@ class SortHelper {
 		this.key = key;
 		this.duration = duration;
 	}
-}
+}     
