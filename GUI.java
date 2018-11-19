@@ -1,4 +1,4 @@
-package example;
+package CSE360;
 import java.awt.EventQueue;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -120,7 +120,7 @@ public class GUI {
 		// Quit button:
 		JButton quitButton = new JButton("Quit");
 		quitButton.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
-		quitButton.setBounds(401, 306, 55, 30);
+		quitButton.setBounds(425, 306, 55, 29);
 		mainFrame.getContentPane().add(quitButton);
 		
 			// Quit button action listener. 
@@ -141,12 +141,7 @@ public class GUI {
 		labelOutput.setBounds(343, 76, 44, 16);
 		mainFrame.getContentPane().add(labelOutput);
 		
-		
-		// Input text area:
-		//JTextArea textAreaInput = new JTextArea();
-		//textAreaInput.setBounds(45, 104, 180, 190);
-		//mainFrame.getContentPane().add(textAreaInput);
-		
+		//Input Fields
 		ActivityField = new JTextField(20);
 		ActivityField.setBounds(125, 104, 90, 30);
 		mainFrame.getContentPane().add(ActivityField);
@@ -210,12 +205,59 @@ public class GUI {
 				copy.duration = current.duration;
 				for(int i=0;i <current.dependencies.size();i++)
 					copy.dependencies.add(current.dependencies.get(i));
-				allActivities.add(copy);// use this to keep track of every activity entered
+				allActivities.add(copy);
 				createActivityList(current);
 				ActivityField.setText("");
 				ActivityDuration.setText("");
 				dependencyField.setText("");
-				//printActivities();
+			}
+		});
+		
+		JButton EditActivity = new JButton("EDIT");
+		EditActivity.setBounds(150, 254, 60, 30);
+		EditActivity.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
+		mainFrame.getContentPane().add(EditActivity);
+		
+		// Process button action listener:
+		EditActivity.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				JTextField actField = new JTextField(5);
+				JTextField durField = new JTextField(5);
+
+				JPanel myPanel = new JPanel();
+				myPanel.add(new JLabel("Activity Name:"));
+				myPanel.add(actField);
+				myPanel.add(Box.createHorizontalStrut(15)); //spacer
+				myPanel.add(new JLabel("New Duration:"));
+				myPanel.add(durField);
+
+				int result = JOptionPane.showConfirmDialog(null, myPanel, "", JOptionPane.OK_CANCEL_OPTION);
+
+				// Find the activity
+				String newName = actField.getText();
+				int newDur = Integer.parseInt(durField.getText());
+
+				for (int i = 0; i < allActivities.size(); i++)
+				{
+					if (allActivities.get(i).activityName.equals(newName))
+						allActivities.get(i).duration = newDur;
+				}
+
+				paths.clear();
+				activityList.clear();
+
+				//Recreate the activitiesList and paths
+				for (int i = 0; i < allActivities.size(); i++)
+				{
+					createActivityList(allActivities.get(i));
+					System.out.println("Activity Name: "+ allActivities.get(i).activityName);
+					if(allActivities.get(i).dependencies.size() != 0)
+					{
+						for(int j=0;j<allActivities.get(i).dependencies.size();j++)
+							System.out.println(allActivities.get(i).dependencies.get(j)+" ");
+					}
+				}
 			}
 		});
 		
@@ -284,13 +326,11 @@ public class GUI {
 					helpFrame.setVisible(true);
 					
 					// Application label (help text):
-					JLabel helpText = new JLabel("<html>To use the program, enter your input in the ‘Input’ dialog box on the left of the interface. Input will be formatted as:<br><br>"
-							+ "Activity Name, Duration, List of Dependencies<br><br><br>"
+					JLabel helpText = new JLabel("<html>To use the program, enter your input under the ‘Input’ lable on the left of the interface.<br><br>"
 							+ "- The activity name will be the name of the activity, which can be a string containing both letters, numbers, and symbols.<br><br>"
 							+ "- The duration will be the length of duration of the previously stated activity, given as an integer. The duration may not contain any letters or symbols.<br><br>"
-							+ "- The list of dependencies will be the preceding activities that must come before the given activity. Dependency names must match their corresponding activity name exactly. If there is more than one dependency, separate them in a list with a semicolon.<br><br>"
-							+ "- If the activity has no dependencies, in the part of the parameter where the dependency names would go, list the special character ‘X’.<br><br>"
-							+ "- The activity name, duration, and list of dependencies must be separated by commas.<br><br>"
+							+ "- The list of dependencies will be the preceding activities that must come before the given activity. Dependency names must match their corresponding activity name exactly. If there is more than one dependency, separate them in a list with a comma.<br><br>"
+							+ "- If the activity has no dependencies, just leave the dependecies box empty’.<br><br>"
 							+ "- All input must be given in the order specified above, no rearranging of parameters is allowed.<br><br><br>"
 							+ "Once you have typed in all of your input, click the ‘PROCESS’ button on the bottom of the interface to run the program using your parameters.<br><br>"
 							+ "The Output of the program using our parameters will be displayed on the right side of the interface. The Output will include a list of all paths possible, using your parameters. The paths will be organized in descending order by duration.<br><br>"
@@ -324,6 +364,8 @@ public class GUI {
 			buttonProcess.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					
+					textAreaOutput.setText(null);
+					
 					int n = addActivityListToPath();
 					if (n == 1)
 						JOptionPane.showMessageDialog(null, "Nodes are not connected");
@@ -348,7 +390,7 @@ public class GUI {
 		// Reset button:
 		JButton buttonReset = new JButton("Reset");
 		buttonReset.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
-		buttonReset.setBounds(265, 307, 55, 29);
+		buttonReset.setBounds(245, 306, 65, 29);
 		mainFrame.getContentPane().add(buttonReset);
 		
 			// Reset button action listener:
@@ -367,11 +409,13 @@ public class GUI {
 		
 		JButton btnCriticalOutput = new JButton("Critical Output");
 		btnCriticalOutput.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
-		btnCriticalOutput.setBounds(66, 306, 100, 29);
+		btnCriticalOutput.setBounds(45, 306, 125, 29);
 		mainFrame.getContentPane().add(btnCriticalOutput);
 		
 			btnCriticalOutput.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					
+					textAreaOutput.setText(null);
 					
 					int n = addActivityListToPath();
 					if (n == 1)
@@ -393,7 +437,7 @@ public class GUI {
 		
 		JButton btnExportReport = new JButton("Export Report");
 		btnExportReport.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
-		btnExportReport.setBounds(313, 307, 95, 29);
+		btnExportReport.setBounds(320, 306, 100, 29);
 		mainFrame.getContentPane().add(btnExportReport);
 		
 			btnExportReport.addActionListener(new ActionListener() {
@@ -402,7 +446,7 @@ public class GUI {
 					JTextField filenameField = new JTextField(5);
 
 					JPanel myPanel = new JPanel();
-					myPanel.add(new JLabel("Please enter a file name:"));
+					myPanel.add(new JLabel("Enter Report Title:"));
 					myPanel.add(filenameField);
 
 					int result = JOptionPane.showConfirmDialog(null, myPanel, "", JOptionPane.OK_CANCEL_OPTION);
@@ -590,11 +634,10 @@ public class GUI {
 				{
 					str += list.get(j).activityName + " ";
 				}
-				str += "\n Duration: " + values.get(i).duration + " ";
+				str += "\nDuration: " + values.get(i).duration + " \n";
 				str += "\n";
 			}
 			if (key == 0){ 
-				System.out.println(str);
 				return str;
 			}
 			else
@@ -615,7 +658,7 @@ public class GUI {
 					{
 						str += list.get(j).activityName + " ";
 					}
-				str += "\t Duration: " + values.get(i).duration + " ";
+				str += "\nDuration: " + values.get(i).duration + " \n";
 				str += "\n";
 			}
 			return str;
@@ -738,13 +781,13 @@ public class GUI {
 			writer.println(myFileName);
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 			LocalDateTime now = LocalDateTime.now();
-			writer.println(dtf.format(now));
+			writer.println("Date-Time Created:" + dtf.format(now));
+			writer.println();
 			writer.println("Activity List: ");
 			for (int i = 0; i < allActivities.size(); i++)
 			{
-				writer.print(allActivities.get(i).activityName + " ");
+				writer.print(allActivities.get(i).activityName + " - ");
 				writer.println(allActivities.get(i).duration);
-				writer.println();
 			}
 			writer.println();
 			writer.println("Paths: ");
@@ -754,7 +797,7 @@ public class GUI {
 				duration = 0;
 				for (int j = 0; j < paths.get(i).size(); j++)
 				{
-					writer.print(paths.get(i).get(j).activityName + " ");
+					writer.print(paths.get(i).get(j).activityName + " -> ");
 					duration += paths.get(i).get(j).duration;
 				}
 				writer.print(duration);
