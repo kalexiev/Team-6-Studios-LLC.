@@ -1,4 +1,4 @@
-package example;
+//package 360proj;
 import java.awt.EventQueue;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
