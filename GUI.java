@@ -1,4 +1,4 @@
-//package 360proj;
+package example;
 import java.awt.EventQueue;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -61,6 +61,10 @@ public class GUI {
 	private JFrame mainFrame;
 	private JFrame aboutFrame;
 	private JFrame helpFrame;
+	
+	protected JTextField ActivityField;
+	protected JTextField ActivityDuration;
+	protected JTextField dependencyField;
 	
 	//Static Variable -- must be cleared every time
 	static ArrayList<LinkedList<Activity>> paths;
@@ -139,9 +143,81 @@ public class GUI {
 		
 		
 		// Input text area:
-		JTextArea textAreaInput = new JTextArea();
-		textAreaInput.setBounds(45, 104, 180, 190);
-		mainFrame.getContentPane().add(textAreaInput);
+		//JTextArea textAreaInput = new JTextArea();
+		//textAreaInput.setBounds(45, 104, 180, 190);
+		//mainFrame.getContentPane().add(textAreaInput);
+		
+		ActivityField = new JTextField(20);
+		ActivityField.setBounds(125, 104, 90, 30);
+		mainFrame.getContentPane().add(ActivityField);
+		
+		JLabel ActivityLabel = new JLabel("Activity Name:");
+		ActivityLabel.setBounds(30, 104, 90, 35);
+		mainFrame.getContentPane().add(ActivityLabel);
+		
+		ActivityDuration = new JTextField(20);
+		ActivityDuration.setBounds(125, 154, 90, 30);
+		mainFrame.getContentPane().add(ActivityDuration);
+		
+		JLabel ActivityDurationLabel = new JLabel("Duration:");
+		ActivityDurationLabel.setBounds(60, 154, 90, 35);
+		mainFrame.getContentPane().add(ActivityDurationLabel);
+		//ActivityDuration.addActionListener(this);
+
+		dependencyField = new JTextField(20);
+		dependencyField.setBounds(125, 204, 90, 30);
+		mainFrame.getContentPane().add(dependencyField);
+		
+		JLabel DependencyLabel = new JLabel("Dependencies:");	
+		DependencyLabel.setBounds(30, 204, 90, 35);
+		mainFrame.getContentPane().add(DependencyLabel);
+		
+		JButton AddActivity = new JButton("Add Activity");
+		AddActivity.setBounds(65, 254, 95, 30);
+		AddActivity.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
+		mainFrame.getContentPane().add(AddActivity);
+		
+		// Process button action listener:
+		AddActivity.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				activityName = ActivityField.getText();
+				activityDuration = ActivityDuration.getText();
+				dependencyNames = dependencyField.getText();
+				System.out.println(dependencyNames);
+				Activity current = new Activity();
+				Activity copy = new Activity();
+				
+				try
+				{
+					current.duration = Integer.parseInt(activityDuration);
+				} catch (NumberFormatException e1)
+				{
+					JOptionPane.showMessageDialog(null, "Duration must be an integer");
+					return;
+				}
+				current.activityName = activityName;
+				StringTokenizer str = new StringTokenizer(dependencyNames, ",");
+				while (str.hasMoreTokens())
+					current.dependencies.add(str.nextToken());
+				
+				System.out.println("Activity Name: "+ current.activityName);
+				for(int i=0;i<current.dependencies.size();i++)
+				{
+					System.out.println(current.dependencies.get(i));
+				}
+				copy.activityName = current.activityName;
+				copy.duration = current.duration;
+				for(int i=0;i <current.dependencies.size();i++)
+					copy.dependencies.add(current.dependencies.get(i));
+				allActivities.add(copy);// use this to keep track of every activity entered
+				createActivityList(current);
+				ActivityField.setText("");
+				ActivityDuration.setText("");
+				dependencyField.setText("");
+				//printActivities();
+			}
+		});
 		
 		// Output text area:
 		JTextArea textAreaOutput = new JTextArea();
@@ -208,15 +284,15 @@ public class GUI {
 					helpFrame.setVisible(true);
 					
 					// Application label (help text):
-					JLabel helpText = new JLabel("<html>To use the program, enter your input in the â€˜Inputâ€™ dialog box on the left of the interface. Input will be formatted as:<br><br>"
+					JLabel helpText = new JLabel("<html>To use the program, enter your input in the ‘Input’ dialog box on the left of the interface. Input will be formatted as:<br><br>"
 							+ "Activity Name, Duration, List of Dependencies<br><br><br>"
 							+ "- The activity name will be the name of the activity, which can be a string containing both letters, numbers, and symbols.<br><br>"
 							+ "- The duration will be the length of duration of the previously stated activity, given as an integer. The duration may not contain any letters or symbols.<br><br>"
 							+ "- The list of dependencies will be the preceding activities that must come before the given activity. Dependency names must match their corresponding activity name exactly. If there is more than one dependency, separate them in a list with a semicolon.<br><br>"
-							+ "- If the activity has no dependencies, in the part of the parameter where the dependency names would go, list the special character â€˜Xâ€™.<br><br>"
+							+ "- If the activity has no dependencies, in the part of the parameter where the dependency names would go, list the special character ‘X’.<br><br>"
 							+ "- The activity name, duration, and list of dependencies must be separated by commas.<br><br>"
 							+ "- All input must be given in the order specified above, no rearranging of parameters is allowed.<br><br><br>"
-							+ "Once you have typed in all of your input, click the â€˜PROCESSâ€™ button on the bottom of the interface to run the program using your parameters.<br><br>"
+							+ "Once you have typed in all of your input, click the ‘PROCESS’ button on the bottom of the interface to run the program using your parameters.<br><br>"
 							+ "The Output of the program using our parameters will be displayed on the right side of the interface. The Output will include a list of all paths possible, using your parameters. The paths will be organized in descending order by duration.<br><br>"
 							+ "Also, part of V2, you may press 'Critical Path' to be outputted your network diagram's critical path in the output box, as well as the 'Export Report' button to export the results into a text document.</html>");
 					helpText.setBounds(25, 15, 750, 550);
@@ -237,7 +313,7 @@ public class GUI {
 				}
 			});
 		
-			
+		
 		// Process button:
 		JButton buttonProcess = new JButton("Process");
 		buttonProcess.setFont(new Font("Lucida Grande", Font.PLAIN, 10));
@@ -248,64 +324,23 @@ public class GUI {
 			buttonProcess.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					
-					try {
-						String userInput[] = textAreaInput.getText().split("\\n");
-						ArrayList<String>inputList = new ArrayList<>(Arrays.asList(userInput));
-
-						for (int i = 0; i < inputList.size(); i++) {
-							String currAct = inputList.get(i);
-							String[] temp;
-							temp = currAct.split(",");
-							//***if temp[1] is not an int, throw error***
-							
-								//Activity tempAct = new Activity(temp[0], Integer.parseInt(temp[1]), temp[2]);   
-							//	activityList.add(tempAct);	
-								activityName = temp[0];
-								activityDuration = temp[1];
-								dependencyNames = temp[2];
-
-								Activity current = new Activity();
-								Activity copy = new Activity();
-								try
-								{
-									current.duration = Integer.parseInt(activityDuration);
-								} catch (NumberFormatException e1)
-								{
-									JOptionPane.showMessageDialog(null, "Duration must be an integer");
-									return;
-								}
-								current.activityName = activityName;
-								
-								StringTokenizer str = new StringTokenizer(dependencyNames, ";");
-								while (str.hasMoreTokens())
-									current.dependencies.add(str.nextToken());
-								
-								System.out.println("Activity Name: "+ current.activityName);
-								for(int j=0; j<current.dependencies.size(); j++)
-								{
-									System.out.println(current.dependencies.get(j));
-								}
-								
-								copy.activityName = current.activityName;
-								copy.duration = current.duration;
-								
-								for(int j=0;j <current.dependencies.size();j++)
-									copy.dependencies.add(current.dependencies.get(j));
-								
-								allActivities.add(copy);// use this to keep track of every activity entered
-								createActivityList(current);
-								printActivities();
-						    }
-						
-						//Write Paths to the output
-						textAreaOutput.append(displayPathOrders(0));
-						
-						
-					} 
-					catch (ArrayIndexOutOfBoundsException exception) {
-						 JOptionPane.showMessageDialog(null, "Input error...", "Error", JOptionPane.ERROR_MESSAGE);
+					int n = addActivityListToPath();
+					if (n == 1)
+						JOptionPane.showMessageDialog(null, "Nodes are not connected");
+					else if (n == 2)
+						JOptionPane.showMessageDialog(null, "Circular Dependency Created");
+					else
+					{
+						String s = displayPathOrders(0);
+						textAreaOutput.append(s);
+						try
+						{
+							createFile(fileName);
+						} catch (IOException e1)
+						{
+							e1.printStackTrace();
+						}
 					}
-					
 				}
 			});
 		
@@ -319,11 +354,14 @@ public class GUI {
 			// Reset button action listener:
 			buttonReset.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					textAreaInput.setText(null);
+					//textAreaInput.setText(null);
 					textAreaOutput.setText(null);
 					allActivities.clear();
 					paths.clear();
 					activityList.clear();
+					ActivityField.setText("");
+					ActivityDuration.setText("");
+					dependencyField.setText("");
 				}
 			});
 		
@@ -341,8 +379,7 @@ public class GUI {
 					else if (n == 2)
 						JOptionPane.showMessageDialog(null, "A cycle was created");
 					String s = displayPathOrders(1);
-					System.out.println(s);
-					JOptionPane.showMessageDialog(null, s);
+					textAreaOutput.append(s);
 					try
 					{
 						createFile(fileName);
@@ -397,7 +434,6 @@ public class GUI {
 	
 	public void AddToPath(Activity newNode, ArrayList<LinkedList<Activity>> paths)
 	{
-		// start
 		if (newNode.dependencies.size() == 0)
 		{
 			LinkedList<Activity> newPath = new LinkedList<>();
@@ -406,14 +442,12 @@ public class GUI {
 		} 
 		else
 		{
-			// check if this path
 			for (int k = 0; k < newNode.dependencies.size(); k++)
 			{
 				for (int i = 0; i < paths.size(); i++)
 				{
 					for (int j = 0; j < paths.get(i).size(); j++)
 					{
-						// last element in linked list is the dependency
 						if (paths.get(i).getLast().activityName.equalsIgnoreCase(newNode.dependencies.get(k)))
 						{
 							paths.get(i).add(newNode);
@@ -494,12 +528,12 @@ public class GUI {
 					{
 						paths.get(i).add(copy);
 						added++;
-					} else // not the last element so duplicate the path up to this point
+					} 
+					else
 					{
 						LinkedList<Activity> newPath = new LinkedList<>();
 						for (int k = 0; k <= j; k++)
 						{
-							// copy the activity from original path and add
 							Activity newActivity = new Activity();
 							newActivity.activityName = paths.get(i).get(k).activityName;
 							newActivity.duration = paths.get(i).get(k).duration;
@@ -510,15 +544,14 @@ public class GUI {
 						newPath.add(copy);
 						paths.add(i + 1, newPath);
 						added++;
-						i++;// skip the next one because we just created it
+						i++;
 					}
 				}
 			}
 		}
-		// added dependency at least one time
 		if (added > 0)
 			return 0;
-		return -1;// not found in list, try again later
+		return -1;
 	}
 	
 	protected String displayPathOrders(int key)
@@ -536,14 +569,12 @@ public class GUI {
 			int n = values.size();
 			for (int i = 0; i < n - 1; i++)
 			{
-				// Find the max
 				int max = i;
 				for (int j = i + 1; j < n; j++)
 				{
 					if (values.get(j).duration > values.get(max).duration)
 						max = j;
 				}
-				// Swap the found max element
 				SortHelper temp = new SortHelper(values.get(max).key, values.get(max).duration);
 				values.get(max).key = values.get(i).key;
 				values.get(max).duration = values.get(i).duration;
@@ -553,22 +584,24 @@ public class GUI {
 			String str = "";
 			for (int i = 0; i < values.size(); i++)
 			{
-				str += "\n Path " + i+1;
+				str += "Path \n";
 				LinkedList<Activity> list = paths.get(values.get(i).key);
 				for (int j = 0; j < list.size(); j++)
 				{
-					str += list.get(j).activityName + " , ";
+					str += list.get(j).activityName + " ";
 				}
 				str += "\n Duration: " + values.get(i).duration + " ";
 				str += "\n";
 			}
-			if (key == 0)
+			if (key == 0){ 
+				System.out.println(str);
 				return str;
+			}
 			else
 			{
 				int critDur = values.get(0).duration;
 				int stopIndex = 0;
-				str = "";
+				str = "Critical Path \n";
 				for (int i = 1; i < values.size(); i++)
 				{
 					if (values.get(i).duration >= critDur)
@@ -612,7 +645,6 @@ public class GUI {
 	{
 		boolean flag = false;;
 		ArrayList<String> checkDuplicate = new ArrayList<String>();
-		//Prefill with values from first path
 		for (int j = 0; j < paths.get(0).size(); j++)
 		{
 			checkDuplicate.add(paths.get(0).get(j).activityName);
@@ -622,7 +654,6 @@ public class GUI {
 			flag = false;
 			for(int j=0;j<paths.get(i).size();j++)
 			{
-				//If these are different, then populate duplicate Array with the next set to check
 				if(checkDuplicate.get(j) != paths.get(i).get(j).activityName)
 				{
 					for(int k=0;k<paths.get(i).size();k++)
@@ -633,7 +664,6 @@ public class GUI {
 					break;
 				}
 			}
-			//flag is false, duplicate path
 			if(!flag)
 			{
 				paths.remove(i);
@@ -676,7 +706,6 @@ public class GUI {
 			}
 		}
 		return 0;
-
 	}
 
 	public void printActivities()
