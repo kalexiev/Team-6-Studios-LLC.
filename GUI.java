@@ -208,15 +208,15 @@ public class GUI {
 					helpFrame.setVisible(true);
 					
 					// Application label (help text):
-					JLabel helpText = new JLabel("<html>To use the program, enter your input in the ‘Input’ dialog box on the left of the interface. Input will be formatted as:<br><br>"
+					JLabel helpText = new JLabel("<html>To use the program, enter your input in the â€˜Inputâ€™ dialog box on the left of the interface. Input will be formatted as:<br><br>"
 							+ "Activity Name, Duration, List of Dependencies<br><br><br>"
 							+ "- The activity name will be the name of the activity, which can be a string containing both letters, numbers, and symbols.<br><br>"
 							+ "- The duration will be the length of duration of the previously stated activity, given as an integer. The duration may not contain any letters or symbols.<br><br>"
 							+ "- The list of dependencies will be the preceding activities that must come before the given activity. Dependency names must match their corresponding activity name exactly. If there is more than one dependency, separate them in a list with a semicolon.<br><br>"
-							+ "- If the activity has no dependencies, in the part of the parameter where the dependency names would go, list the special character ‘X’.<br><br>"
+							+ "- If the activity has no dependencies, in the part of the parameter where the dependency names would go, list the special character â€˜Xâ€™.<br><br>"
 							+ "- The activity name, duration, and list of dependencies must be separated by commas.<br><br>"
 							+ "- All input must be given in the order specified above, no rearranging of parameters is allowed.<br><br><br>"
-							+ "Once you have typed in all of your input, click the ‘PROCESS’ button on the bottom of the interface to run the program using your parameters.<br><br>"
+							+ "Once you have typed in all of your input, click the â€˜PROCESSâ€™ button on the bottom of the interface to run the program using your parameters.<br><br>"
 							+ "The Output of the program using our parameters will be displayed on the right side of the interface. The Output will include a list of all paths possible, using your parameters. The paths will be organized in descending order by duration.<br><br>"
 							+ "Also, part of V2, you may press 'Critical Path' to be outputted your network diagram's critical path in the output box, as well as the 'Export Report' button to export the results into a text document.</html>");
 					helpText.setBounds(25, 15, 750, 550);
@@ -289,7 +289,7 @@ public class GUI {
 								copy.activityName = current.activityName;
 								copy.duration = current.duration;
 								
-								for(int j=0;i <current.dependencies.size();j++)
+								for(int j=0;j <current.dependencies.size();j++)
 									copy.dependencies.add(current.dependencies.get(j));
 								
 								allActivities.add(copy);// use this to keep track of every activity entered
